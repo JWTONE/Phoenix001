@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='css/style.css')}}"
+    />
+
+    <title>Phoenix Team</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Poppins&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+  </head>
+
+  <body>
+    <!-- modal -->
+      <div class="d-grid gap-2 d-md-flex justify-content-md-end m-5 mt-5">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          <i class="bi bi-person-plus"></i>
+        </button>
+      </div>
+      
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">팀원 추가</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action="{{ url_for('member_create') }}" method='post'>
+                <div class="mb-3">
+                  <label for="exampleInputEmail1" class="form-label">이름</label>
+                  <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                    name='username'>
+                  <div id="emailHelp" class="form-text">추가할 팀원의 이름을 넣어주세요.</div>
+                </div>
+                <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label">MBTI</label>
+                  <input type="text" class="form-control" id="exampleInputPassword1" name='mbti'>
+                  <div id="emailHelp" class="form-text">팀원의 MBTI을 넣어주세요.</div>
+                </div>
+                <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label">역할</label>
+                  <input type="text" class="form-control" id="exampleInputPassword1" name='collabo_style'>
+                  <div id="emailHelp" class="form-text">팀원이 맡은 역할을 넣어주세요.</div>
+                </div>
+                <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label">장점</label>
+                  <input type="text" class="form-control" id="exampleInputPassword1" name='advantage'>
+                  <div id="emailHelp" class="form-text">팀원의 장점을 넣어주세요.</div>
+                </div>
+                <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label">프로필 이미지</label>
+                  <input type="text" class="form-control" id="exampleInputPassword1" name='image_url'>
+                  <div id="emailHelp" class="form-text">팀원의 프로필 이미지 URL을 넣어주세요.</div>
+                </div>
+                <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label">블로그</label>
+                  <input type="text" class="form-control" id="exampleInputPassword1" name='blog_url'>
+                  <div id="emailHelp" class="form-text">팀원의 블로그 URL을 넣어주세요.</div>
+                </div>
+                <button type="submit" class="btn btn-primary d-grid gap-2 mx-auto">확인</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+    <!-- main -->
+    <div class="large-font">
+      <p>
+        불사조, 불타오르는 열정을 전합니다! <br />
+        우리는 그저 팀이 아닌, 혁신과 도전의 심장입니다💪.
+      </p>
+    </div>
+
+    <div class="small-font">
+      <p class="noto-sans-kr">
+        4개월은 우리의 미래를 만들어나가는 소중한 시간이 될 것이며, <br />
+        불사조처럼 불타오르는 열정들로 우리의 프로그래밍 여정을
+        완성해나가겠습니다.
+      </p>
+    </div>
+
+    <div class="portraits-container">
+      {% for mem in data %}
+      <div class="portrait" data-username="{{ mem.username }}">
+        <img src="{{mem.image_url}}" alt="Portrait 1" />
+        <p class="p-text" span="poppins-regular">{{mem.mbti}}</p>
+        <p class="p-name">{{mem.username}}</p>
+      </div>
+      {% endfor %}
+    </div>
+  
+    <div class="gr_box">
+      <div class="photobox">
+      </div>
+  
+      <div id="textbox">
+
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.portrait').forEach(function (portrait) {
+              portrait.addEventListener('click', function () {
+                const username = this.getAttribute('data-username');
+      
+                fetch(`/members/${username}/details`)
+                  .then(response => response.json())
+                  .then(data => {
+                    const blogUrl = data.blog_url.startsWith('http://') || data.blog_url.startsWith('https://') ? data.blog_url : `http://${data.blog_url}`;
+                    const textbox = document.querySelector('.gr_box #textbox');
+                    textbox.innerHTML = `
+                                          <p class="collabo_style">${data.collabo_style}</p>
+                                          <h3 class="name">${data.username}</h3>
+                                          <p class="mbti">${data.mbti}</p>
+                                          <p><br /></p>
+                                          <div class="advantageBox">
+                                          <p class="advantage">${data.advantage}</p>
+                                          
+                                          <div/>
+                                          <a href="${blogUrl}" target="_blank" class="blogurl">${blogUrl}</a>
+                                          <div/>
+                                          <div class="buttonSection">
+                                          <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="bi bi-pencil-square"></i> 수정</button>
+                                          <button type="button" class="btn btn-outline-danger" onclick="deleteMember('${username}')"><i class="bi bi-trash3"></i> 삭제</button>
+                                          <div>
+                                          `
+                      ;
+                    // 필요한 경우 이미지 업데이트
+                    const photobox = document.querySelector('.gr_box .photobox');
+                    photobox.innerHTML = `<img src="${data.image_url}" alt="${data.username}" style="width: 100%; height: auto;">`;
+                  })
+                  .catch(error => console.error('Error:', error));
+              });
+            });
+          });
+      
+          // Function to handle member deletion
+          function deleteMember(username) {
+            if (confirm('삭제 하시겠습니까?')) {
+              fetch(`/members/${username}/delete`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                // Flask에서 CSRF 토큰을 요구하는 경우, 해당 토큰을 포함해야 할 수도 있습니다.
+              }).then(response => {
+                if (response.ok) {
+                  alert('멤버가 성공적으로 삭제되었습니다.');
+                  // 변경사항을 반영하기 위해 페이지 새로고침 또는 UI 업데이트
+                  window.location.reload(); // 페이지 새로고침
+                } else {
+                  alert('멤버를 삭제하는데 실패했습니다.');
+                }
+              }).catch(error => {
+                console.error('Error:', error);
+                alert('에러가 발생했습니다.');
+              });
+            }
+          }
+      
+          document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.edit-btn').forEach(function (btn) {
+              btn.addEventListener('click', function () {
+                const username = this.getAttribute('data-username');
+                // 기존 멤버 정보를 가져오기 위한 요청
+                fetch(`/members/${username}/details`)
+                  .then(response => response.json())
+                  .then(data => {
+                    // 모달 폼에 멤버 정보 채우기
+                    document.querySelector('#exampleModal #exampleInputEmail1').value = data.username;
+                    // 나머지 필드도 동일하게 채웁니다.
+                    $('#exampleModal').modal('show'); // 부트스트랩 모달 표시
+                  })
+                  .catch(error => console.error('Error:', error));
+              });
+            });
+          });
+      
+        </script>
+  </body>
+</html>
